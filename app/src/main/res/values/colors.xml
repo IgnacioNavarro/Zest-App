@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="Primary_Color">#ffff33</color>
+    <color name="red_blood">#bb0b0b</color>
     <color name="Background">#121212</color>
     <color name="Background_lighter">#212121</color>
     <color name="grey">#303030</color>
