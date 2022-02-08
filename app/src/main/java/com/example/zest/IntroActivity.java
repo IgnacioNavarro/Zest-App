@@ -1,7 +1,10 @@
 package com.example.zest;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -37,9 +40,11 @@ public class IntroActivity extends AppCompatActivity {
         viewPager.setAdapter(pagerAdapter);
 
         splashimg.animate().translationY(-5000).setDuration(1500).setStartDelay(1000);
-        logo.animate().translationY(-700).setDuration(1000).setStartDelay(1500);
+        logo.animate().translationY(-2000).setDuration(1000).setStartDelay(1000);
         lottieAnimationView.animate().translationY(5000).setDuration(1000).setStartDelay(1500);
 
+
+        SharedPreferences preferences ;
 
     }
 
@@ -75,5 +80,6 @@ public class IntroActivity extends AppCompatActivity {
             return NUM_PAGES;
         }
     }
+
 
 }
