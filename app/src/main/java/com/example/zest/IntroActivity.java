@@ -1,9 +1,11 @@
 package com.example.zest;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,6 +22,7 @@ public class IntroActivity extends AppCompatActivity {
 
     ImageView logo, splashimg;
     LottieAnimationView lottieAnimationView;
+    private Boolean firstTime = null;
 
     private static final int NUM_PAGES = 3;
     private ViewPager viewPager;
@@ -35,17 +38,38 @@ public class IntroActivity extends AppCompatActivity {
         splashimg = findViewById(R.id.background);
         lottieAnimationView = findViewById(R.id.lottie);
 
-        viewPager = findViewById(R.id.pager);
-        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
         splashimg.animate().translationY(-5000).setDuration(1500).setStartDelay(1000);
         logo.animate().translationY(-2000).setDuration(1000).setStartDelay(1000);
         lottieAnimationView.animate().translationY(5000).setDuration(1000).setStartDelay(1500);
 
+        if(isFirstTime()){
+            viewPager = findViewById(R.id.pager);
+            pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+            viewPager.setAdapter(pagerAdapter);
+        }else{
+            (new Handler()).postDelayed(this::goToMain, 1800);
 
-        SharedPreferences preferences ;
+        }
 
+
+    }
+
+    private void goToMain(){
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
+
+    private boolean isFirstTime() {
+        if (firstTime == null) {
+            SharedPreferences mPreferences = this.getSharedPreferences("first_time", Context.MODE_PRIVATE);
+            firstTime = mPreferences.getBoolean("firstTime", true);
+            if (firstTime) {
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("firstTime", false);
+                editor.commit();
+            }
+        }
+        return firstTime;
     }
 
 

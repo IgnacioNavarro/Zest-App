@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".IntroActivity"
     android:padding="0dp"
+    android:background="@color/grey_lighter"
     >
 
 
