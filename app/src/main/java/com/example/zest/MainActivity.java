@@ -16,6 +16,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -32,17 +34,14 @@ public class MainActivity extends AppCompatActivity {
         //hooks
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createNotification = findViewById(R.id.notify);
-
-
-
         createNotification.setOnClickListener(v -> sendNotification());
 
 
 
     }
 
-    public void createNotificationChannel()
-    {
+    //Creacion del canal
+    public void createNotificationChannel() {
         mNotifyManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >=
@@ -58,18 +57,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    //crear nueva notificacion
     private NotificationCompat.Builder getNotificationBuilder(){
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
-                .setContentTitle("You've been notified!")
+                .setContentTitle("Motivación diaria de Zest")
                 .setContentText("This is your notification text.")
                 .setSmallIcon(R.drawable.zest);
         return notifyBuilder;
     }
 
+    //enviar notificacion a traves del manager con la notificacion creada
     public void sendNotification(){
         NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
         mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+    }
+
+    public int randomNumber(int max,int min){
+        Random rand = new Random();
+
+        // nextInt as provided by Random is exclusive of the top value so you need to add 1
+
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
 }
