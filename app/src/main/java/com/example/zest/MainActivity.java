@@ -11,10 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -25,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int NOTIFICATION_ID = 0;
     Button createNotification;
     private NotificationManager mNotifyManager;
+    private DatabaseReference rootDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +41,28 @@ public class MainActivity extends AppCompatActivity {
         //hooks
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createNotification = findViewById(R.id.notify);
-        createNotification.setOnClickListener(v -> sendNotification());
+
+        //leer database
+        rootDatabase = FirebaseDatabase.getInstance("https://zest-a7919-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference().child("QuotesES");
+        rootDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    String data = dataSnapshot.child("001").getValue().toString();
+                    createNotification.setOnClickListener(v -> sendNotification(data));
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
 
 
@@ -58,21 +86,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //crear nueva notificacion
-    private NotificationCompat.Builder getNotificationBuilder(){
+    private NotificationCompat.Builder getNotificationBuilder(String quote){
+
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("Motivación diaria de Zest")
-                .setContentText("This is your notification text.")
+                .setContentText(quote)
                 .setSmallIcon(R.drawable.zest);
         return notifyBuilder;
     }
 
     //enviar notificacion a traves del manager con la notificacion creada
-    public void sendNotification(){
-        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
+    public void sendNotification(String quote){
+        NotificationCompat.Builder notifyBuilder = getNotificationBuilder(quote);
         mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
     }
 
-    public int randomNumber(int max,int min){
+    public int randomNumber(int min,int max){
         Random rand = new Random();
 
         // nextInt as provided by Random is exclusive of the top value so you need to add 1
