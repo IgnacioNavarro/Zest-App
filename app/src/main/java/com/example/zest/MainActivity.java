@@ -36,9 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int NOTIFICATION_ID = 0;
     Button createNotification;
     private NotificationManager mNotifyManager;
-    private DatabaseReference rootDatabase;
     private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,44 +47,23 @@ public class MainActivity extends AppCompatActivity {
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createNotification = findViewById(R.id.notify);
 
-        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, MainActivity.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        createNotification.setOnClickListener(v -> {
+                //llamamos al intent de la notificacion
+                Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0, intent,0);
+                alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        // Set the alarm to start at time X
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 17);
-        calendar.set(Calendar.MINUTE, 42);
-
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                1000 * 60 * 60 * 24, alarmIntent);
-
-        //leer database
-        rootDatabase = FirebaseDatabase.getInstance("https://zest-a7919-default-rtdb.europe-west1.firebasedatabase.app/")
-                .getReference().child("QuotesES");
-        rootDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-
-                    createNotification.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String data = dataSnapshot.child(String.valueOf(randomNumber(1,4))).getValue().toString();
-                            sendNotification(data);
-                        }
-                    });
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+                // Set the alarm to start at time X
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, 18);
+                calendar.set(Calendar.MINUTE, 31);
+            //se repite cada dia
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    1000 *60 *60 * 24, pendingIntent);
         });
+
+
 
 
 
@@ -94,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Creacion del canal
+    //Creacion del canal para las notis
     public void createNotificationChannel() {
         mNotifyManager = (NotificationManager)
                 getSystemService(NOTIFICATION_SERVICE);
@@ -111,30 +88,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //crear nueva notificacion
-    private NotificationCompat.Builder getNotificationBuilder(String quote){
 
-        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
-                .setContentTitle("Motivación diaria de Zest")
-                .setContentText(quote)
-                .setSmallIcon(R.drawable.zest);
-        return notifyBuilder;
-    }
 
-    //enviar notificacion a traves del manager con la notificacion creada
-    public void sendNotification(String quote){
-        NotificationCompat.Builder notifyBuilder = getNotificationBuilder(quote);
-        mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
-    }
 
-    public int randomNumber(int min,int max){
-        Random rand = new Random();
 
-        // nextInt as provided by Random is exclusive of the top value so you need to add 1
-
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-
-        return randomNum;
-    }
 
 }
