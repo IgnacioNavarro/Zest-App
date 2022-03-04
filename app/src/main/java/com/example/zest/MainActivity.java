@@ -1,9 +1,13 @@
 package com.example.zest;
 
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     Button createNotification;
     private NotificationManager mNotifyManager;
     private DatabaseReference rootDatabase;
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,19 @@ public class MainActivity extends AppCompatActivity {
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createNotification = findViewById(R.id.notify);
 
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, MainActivity.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        // Set the alarm to start at time X
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 17);
+        calendar.set(Calendar.MINUTE, 42);
+
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                1000 * 60 * 60 * 24, alarmIntent);
+
         //leer database
         rootDatabase = FirebaseDatabase.getInstance("https://zest-a7919-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference().child("QuotesES");
@@ -49,8 +69,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    String data = dataSnapshot.child("001").getValue().toString();
-                    createNotification.setOnClickListener(v -> sendNotification(data));
+
+                    createNotification.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String data = dataSnapshot.child(String.valueOf(randomNumber(1,4))).getValue().toString();
+                            sendNotification(data);
+                        }
+                    });
                 }
 
 
