@@ -30,7 +30,7 @@ public class ReminderBroadcast extends BroadcastReceiver{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     //leemos quote
-                    String data = dataSnapshot.child(String.valueOf(randomNumber(1,4))).getValue().toString();
+                    String data = dataSnapshot.child(String.valueOf(randomNumber(1,37))).getValue().toString();
                     //creamos la notificacion
                     NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(context, "primary_notification_channel")
                             .setContentTitle("Motivación diaria de Zest")
