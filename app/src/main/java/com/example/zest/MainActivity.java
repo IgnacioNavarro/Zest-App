@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     Button createNotification;
     private NotificationManager mNotifyManager;
     private AlarmManager alarmMgr;
+    TimePicker timePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,27 +49,36 @@ public class MainActivity extends AppCompatActivity {
         //hooks
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         createNotification = findViewById(R.id.notify);
+        timePicker = findViewById(R.id.selected_time);
 
-        createNotification.setOnClickListener(v -> {
-                //llamamos al intent de la notificacion
-                Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0, intent,0);
-                alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        //get the selected time
+        Integer hour = timePicker.getCurrentHour();
+        Integer minute = timePicker.getCurrentMinute();
 
-                // Set the alarm to start at time X
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, 18);
-                calendar.set(Calendar.MINUTE, 31);
-            //se repite cada dia
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    1000 *60 *60 * 24, pendingIntent);
+
+
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
+                createNotification.setOnClickListener(v -> {
+                    //llamamos al intent de la notificacion
+                    Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0, intent,0);
+                    alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+                    // Set the alarm to start at time X
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+                    //se repite cada dia
+                    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                            1000 *60 *60 * 24, pendingIntent);
+                    Toast.makeText(getApplicationContext(),"Notificación creada correctamente", Toast.LENGTH_LONG).show();
+                });
+            }
         });
-
-
-
-
-
+        
 
 
     }

@@ -7,4 +7,15 @@
         <item name="colorAccent">@color/Red_error</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="AppTheme" parent="Theme.Zest">
+        <item name="android:timePickerDialogTheme">@style/myTimePickerStyle</item>
+    </style>
+
+    <style name="myTimePickerStyle" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:numbersTextColor">@color/Background</item>
+        <item name="android:numbersBackgroundColor">@color/white</item>
+        <item name="android:numbersSelectorColor">@color/Primary_Color</item>
+        <item name="android:headerBackground">@color/grey_lighter</item>
+    </style>
 </resources>
