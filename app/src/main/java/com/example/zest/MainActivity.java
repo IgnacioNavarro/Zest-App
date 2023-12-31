@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 createNotification.setOnClickListener(v -> {
                     //llamamos al intent de la notificacion
                     Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0, intent,0);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0, intent, PendingIntent.FLAG_IMMUTABLE);
                     alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
                     // Set the alarm to start at time X
